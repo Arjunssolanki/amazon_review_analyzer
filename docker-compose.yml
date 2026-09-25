@@ -1,0 +1,44 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: review_mysql_node
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: review_analytics
+    ports:
+      - "3309:3306"
+    volumes:
+      - ./init-scripts:/docker-entrypoint-initdb.d
+      - mysql_data:/var/lib/mysql
+
+  pipeline:
+    build: .
+    container_name: pipeline_worker_core
+    depends_on:
+      - db
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=review_analytics
+      - TYPESAFE_API_KEY=${TYPESAFE_API_KEY}
+      - TYPESAFE_BASE_URL=${TYPESAFE_BASE_URL}
+    command: ["python", "main.py"]
+
+  dashboard:
+    build: .
+    container_name: streamlit_analytics_server
+    ports:
+      - "8501:8501"
+    depends_on:
+      - db
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=review_analytics
+    command: ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+
+volumes:
+  mysql_data:

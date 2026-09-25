@@ -1,0 +1,20 @@
+name: Docker Build Integration CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository files code block
+        uses: actions/checkout@v4
+
+      - name: Verify compilation setup logic parameters
+        run: |
+          docker build -t test-analyzer-build:latest .
+          echo "Docker image verification build finished successfully."
