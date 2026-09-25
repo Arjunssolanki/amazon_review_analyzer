@@ -1,48 +1,44 @@
-# Amazon Review Analyzer 🚀
+# Amazon Food Review Analyzer 🚀
 
-An enterprise-ready, containerized **Natural Language Processing (NLP) & Feature Sentiment Pipeline** that processes unstructured, raw e-commerce product feedback into structured, granular feature-breakdown metrics.
+An enterprise-ready, containerized **Natural Language Processing (NLP), Data Engineering, & Live Analytics Pipeline** that ingests messy, unstructured e-commerce product feedback from the **Kaggle Amazon Product Reviews** dataset and streams it into structured, granular feature breakdown metrics.
 
-By leveraging **Jev AI (via the TypeSafe SDK)** over a secure proxy bridge, the application evaluates multi-dimensional consumer feedback to construct native **Amazon-style descriptive star ratings** directly inside an isolated container environment.
-
----
-
-## 📊 Detailed Project Ledger & Summary
-
-### 🎯 Why We Created This Project (Project Objectives)
-
-Online consumer evaluations are heavily saturated with unstructured, free-text feedback. While global ratings give a surface-level impression, they hide specific flaws or highlights regarding individual product features (e.g., a phone with a 5-star display but a 1-star battery).
-
-To extract deep, actionable consumer insights, this project was developed as a high-performance analytics utility designed to:
-
-- Bypass superficial global scores by evaluating distinct, feature-level customer sentiment.
-- Streamline messy textual feedback into a deterministic, high-quality data payload schema.
-- Demonstrate advanced industry competencies across **Data Engineering**, **AI/ML API Orchestration**, and **System Containerization (Docker)**.
-
-### 🛠️ What We Have Done (Engineering Pipeline Flow)
-
-1. **API Integration & Proxy Architecture:** Implemented a robust architecture utilizing the `typesafe-sdk` to route programmatic primitives through an external proxy layer (`OpenRouter`), allowing token evaluations without local authentication blocks.
-2. **Defensive Prompt Design & Categorization Schema:** Structured a dual-layered evaluation framework containing 12 distinct analytical parameters. For each targeted topic, the pipeline queries Jev using:
-   - A `Noul` boolean confidence vector to measure topic relevance probability.
-   - A `Score` satisfaction evaluation metric based on 5 calibrated behavioral levels.
-3. **Data Quality Thresholding:** Designed a strict validation gate that rejects classification noise by dropping feature scores if the topic mention probability falls below a **>= 0.5 confidence threshold**.
-4. **Data Aggregation Engine:** Built mathematical calculation scripts to map raw 0–4 token scales into an absolute 1–5 star metric, dynamically tracking running totals and review frequencies per category.
-5. **Containerization & Sandbox Execution:** Bundled all computational resources, environment boundaries, and libraries inside a lightweight, reproducible **Docker Linux container layer**.
-
-### 🏆 What We Have Achieved (Results & Business Insights)
-
-- **Granular Sentiment Dissemination:** Successfully processed a batch of 50 sample product reviews from the **Kaggle Amazon Fine Food Reviews** dataset, mapping thousands of unstructured words into an automated dashboard.
-- **Deterministic Noise Elimination:** Proved the capability of the thresholding engine by accurately identifying and reporting empty product domains (e.g., flagging _Battery Life_ as `no ratings yet` when no explicit text existed).
-- **Enterprise Infrastructure Baseline:** Standardized the workflow into a plug-and-play microservice architecture, allowing seamless integration into downstream streaming systems, cloud data lakes, or interactive dashboards.
+By leveraging **Jev AI (via the TypeSafe SDK)** over a secure OpenRouter proxy bridge, the application evaluates multi-dimensional customer sentiment to construct dynamic, **individual product SKU dashboards** and platform-wide aggregate star ratings stored in an isolated relational database and visualized via a real-time web portal.
 
 ---
 
-## 🏛️ Comprehensive Architecture & File Manifest
+## 📊 Comprehensive Project Summary & Ledger
 
-- **`main.py`** — Orchestrates the entire pipeline; handles CSV reading from the Kaggle dataset, iterates review parsing, calls the analytical service, and renders the terminal visualization dashboard.
-- **`analyzer.py`** — Instantiates the authenticated `TypeSafeClient` via proxy configurations, sends parallel queries to Jev, and applies data-filtering logic.
-- **`questions.py`** — Configures the underlying tracking criteria matrix, mapping explicit instruction text to custom `Noul` and `Score` structures.
-- **`aggregation.py`** — Performs numerical operations to compute running averages and review counts per topic.
-- **`Dockerfile`** — Declares structural compilation parameters to build the runtime container image on top of a clean Python environment layer.
+### 🎯 Project Objectives (Why We Built This)
+
+Standard e-commerce global review ratings (1-5 stars) provide an oversimplified look at customer satisfaction, often hiding specific details about individual product attributes (e.g., a snack with fantastic taste but terrible packaging).
+
+To unlock granular product intelligence, this platform was built as a multi-container analytics service designed to:
+
+- Isolate distinct feature-level customer feedback domain metrics (**Taste & Flavor, Freshness, Texture, Quality, Value for Money, and Performance**).
+- Filter out textual noise by applying a strict **≥ 0.5 confidence threshold** on Jev AI topic mention probabilities before recording ratings.
+- Demonstrate advanced professional competencies across **Data Engineering**, **Relational Database Design (MySQL)**, **Frontend Interface Design (Streamlit)**, and **System Containerization (Docker Compose)**.
+
+### 🛠️ What We Have Done (Product-Aware Engineering Pipeline Flow)
+
+1. **Multi-Container Microservice Isolation:** Architected an interconnected, multi-service network utilizing `docker-compose` to run an isolated database node (`mysql:8.0`), an active ingestion processing engine, and a web analytics server simultaneously.
+2. **Database Schema Orchestration:** Designed an automated database initialization workflow (`init.sql`) inside the Docker engine structure to mount volumes and automatically provision analytics tables on startup with explicit **`product_id` fields** to separate SKU groups.
+3. **Product-Aware Ingestion Engineering:** Programmed a bulletproof `main.py` ingestion loop that extracts unique `Id` and `ProductId` fields natively from the Kaggle dataset alongside text reviews. It features an extended connection timeout window to prevent pipeline drops over long runs.
+4. **Optimized Batch Commit Streaming:** Engineered an chunked commit pattern (`if index % 10 == 0: conn.commit()`) that processes batches of **1,000 records** dynamically. This shaves significant execution time off the synchronous network loop by dramatically lowering disk I/O pressure on the MySQL node.
+5. **Interactive Data Filtering & Visualization:** Developed an animated browser dashboard using **Streamlit** and **Plotly Express** featuring a dynamic sidebar dropdown filter selector. This allows users to seamlessly switch between broad global retail trends and isolated product SKU score panels.
+6. **Git Cache Optimization:** Purged bloated hidden local caches from version history to decouple heavy raw datasets (`Reviews.csv`) from standard tracking, enforcing a production-clean repository well under GitHub's 100MB cap.
+
+---
+
+## 🏛️ System Architecture & File Manifest
+
+- **`docker-compose.yml`** — Coordinates the entire containerized network layout, setting up port allocations, volumes, and environment variables.
+- **`init-scripts/init.sql`** — Automated script executed by the MySQL engine on initial launch to create tables and database structures.
+- **`main.py`** — The data orchestration pipeline; reads the raw CSV dataset, drives batch processing loops, and streams extracted metrics to MySQL.
+- **`app.py`** — The dashboard web server script; handles live database reading and renders interactive Plotly charts.
+- **`analyzer.py`** — Instantiates the authenticated `TypeSafeClient` over an OpenRouter endpoint to send evaluation tokens to the Jev model.
+- **`questions.py`** — Stores the explicit food domain criteria instructions and satisfaction level matrices.
+- **`aggregation.py`** — Performs mathematical calculation logic to average individual review scores into clean, aggregate star metrics.
+- **`.github/workflows/ci-cd.yml`** — Cloud pipeline configuration that automatically verifies image compilation states on GitHub.
 
 ---
 
@@ -50,75 +46,86 @@ To extract deep, actionable consumer insights, this project was developed as a h
 
 ### ⚙️ Prerequisites
 
-Before running the deployment steps, make sure your computer has the following tools installed:
+Ensure the following tools are installed and active on your system:
 
 - **Python 3.12**
-- **Docker Desktop** (Make sure the application is open and running in the background)
+- **Docker Desktop** (Must be open and running in the background)
 
-### 📦 1. Clone & Initialize Workspace
+### 🔑 1. Environment Variable Configuration
 
-Navigate to your active code directory and verify the project footprint structure:
+Create a file named exactly **`.env`** in the project root directory and add your private access configurations:
+
+```text
+TYPESAFE_API_KEY="your_openrouter_api_key_here"
+TYPESAFE_BASE_URL="https://typesafe.ai"
+
+# Secure Database Password Configuration
+MYSQL_ROOT_PASSWORD="Combination2#"
+MYSQL_PASSWORD="Combination2#"
+```
+
+_(Note: Wrapping passwords containing special symbols like `#` in double quotes ensures that the Docker environment parser interprets the string accurately without cutting text off as a code comments)._
+
+### 📊 2. Dataset Alignment & Placement
+
+1. Download the raw CSV review data payload files directly from Kaggle here: **[Kaggle Amazon Product Reviews Dataset](https://kaggle.com)**
+2. Unzip the downloaded file package on your local computer.
+3. Ensure the target dataset file is renamed to exactly **`Reviews.csv`** and save it directly in the project's root folder path.
+
+---
+
+## 🚀 Execution Instructions (Docker Run Controls)
+
+Execute these two commands sequentially inside your terminal to clear out old container states, rebuild your layers, and launch the multi-service network:
 
 ```bash
-cd amazon-review-analyzer
-```
+# Step A: Drop old configurations and completely clear the database volume cache
+docker-compose down -v
 
-### 🔑 2. Environmental Variables Configuration
-
-Create a private environmental credentials file in the root folder named exactly **`.env`** and configure your keys:
-
-```text
-TYPESAFE_API_KEY=your_openrouter_api_key_here
-TYPESAFE_BASE_URL=https://openrouter.ai
-```
-
-_(Note: `.env` is intentionally blocked by our `.gitignore` rules to keep your secret API keys secure)._
-
-### 📊 3. Dataset Placement
-
-Ensure your unzipped Kaggle dataset file is saved directly in the project root folder as:
-
-```text
-Reviews.csv
+# Step B: Build and launch the microservice cluster
+docker-compose up --build
 ```
 
 ---
 
-## 🚀 Execution Instructions (Docker Compilation)
+## 🗄️ Database Verification (Using MySQL Workbench / DBeaver)
 
-Execute these two commands sequentially inside your terminal to build the image and run the application:
+Because our system maps the database externally to bypass local host system port conflicts, you can connect desktop database tools directly to the running container using port **`3309`**.
 
-### Step A: Compile the Docker Image
+### Connection Parameters:
 
-```bash
-docker build -t amazon-analyzer:v1 .
+- **Hostname:** `127.0.0.1` (or `localhost`)
+- **Port:** `3309` _(⚠️ Do not use 3306!)_
+- **Username:** `root`
+- **Password:** `your password`
+- **Database:** `review_analytics`
+
+### Diagnostic SQL Analytics Queries:
+
+```sql
+USE review_analytics;
+
+-- Track total review summary data grouped by product attributes
+SELECT topic_name,
+       COUNT(*) as review_count,
+       ROUND(AVG(star_rating), 1) as avg_stars
+FROM topic_scores
+GROUP BY topic_name;
 ```
 
-### Step B: Run the Pipeline Container
+### Raw Database Result Output (Product-Aware Rows):
 
-```bash
-docker run --env-file .env amazon-analyzer:v1
-```
+![MySQL Workbench Query Output](assets/mysql_output.png)
 
 ---
 
-## 📊 Expected Dashboard Output
+## 📈 Visualizing Real-Time Insights
 
-Upon successful execution, the containerized runtime environment will process the reviews and display the following output directly in your console window:
+Once the `pipeline_worker_core` container finishes streaming records into the database, minimize your terminal window and launch your browser interface link:
+👉 **`http://localhost:8501`**
 
-```text
-Review 1: {'Design & Style': 3.7}
-Review 2: {}
-Review 3: {'Design & Style': 4.4}
-...
-Review 50: {'Value for Money': 1.1}
+### Live Streamlit Dashboard UI Layout (Featuring Dynamic Product Filters):
 
-4.3 out of 5 stars based on 50 processed ratings
----------------------------------------------
-Value for Money    4.5 ★  (10 reviews)
-Quality            4.0 ★  (6 reviews)
-Performance        4.4 ★  (10 reviews)
-Battery Life       no ratings yet
-Ease of Use        4.7 ★  (10 reviews)
-Design & Style     2.9 ★  (5 reviews)
-```
+![Streamlit Web Dashboard App](assets/streamlit_dashboard.png)
+
+---
