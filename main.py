@@ -14,7 +14,8 @@ def get_db_connection():
                 host=os.getenv("MYSQL_HOST", "db"),
                 user=os.getenv("MYSQL_USER", "root"),
                 password=os.getenv("MYSQL_PASSWORD", "secretpass"),
-                database=os.getenv("MYSQL_DATABASE", "review_analytics")
+                database=os.getenv("MYSQL_DATABASE", "review_analytics"),
+                connect_timeout=60  # Extended to handle long-running pipeline connections
             )
             return conn
         except mysql.connector.Error:
@@ -33,19 +34,31 @@ def main():
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    print("Beginning batch analytics pipeline streaming job...")
-    for review in reviews[:50]:
+    print("Beginning large batch analytics pipeline streaming job (1,000 Records)...")
+    
+    # Safely scale the ingestion bounds to the target partition footprint
+    sample_reviews = reviews[:1000]
+    total_records = len(sample_reviews)
+
+    for index, review in enumerate(sample_reviews, 1):
         ratings = analyze_review(review["Text"])
         review_id = review["Id"]
+        product_id = review["ProductId"]
         
         for topic_name, star_rating in ratings.items():
             cursor.execute(
-                """INSERT INTO topic_scores (review_id, topic_name, star_rating)
-                   VALUES (%s, %s, %s)""",
-                (review_id, topic_name, star_rating)
+                """INSERT INTO topic_scores (review_id, product_id, topic_name, star_rating)
+                   VALUES (%s, %s, %s, %s)""",
+                (review_id, product_id, topic_name, star_rating)
             )
-        conn.commit()
-        print(f"Streamed Record {review_id} smoothly into database metrics.")
+        
+        # Batch commits to enhance ingestion velocity and relieve disk I/O pressure
+        if index % 10 == 0 or index == total_records:
+            conn.commit()
+            
+        # Clean progress telemetry logging to avoid standard output buffer drops
+        if index % 50 == 0 or index == total_records:
+            print(f"Progress Pipeline: Successfully ingested {index}/{total_records} reviews.")
 
     cursor.close()
     conn.close()
